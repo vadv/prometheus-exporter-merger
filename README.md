@@ -25,3 +25,26 @@ sources:
     labels:
       key2: value2
 ```
+
+## Kubernetes
+
+The prometheus-exporter-merger is supposed to run as a sidecar.
+
+```yaml
+...
+  template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+...
+    spec:
+      containers:
+...
+      - name: prometheus-exporter-merger
+        image: vadv/prometheus-exporter-merger
+        volumeMounts:
+        - name: config
+          mountPath: /config
+...
+```
