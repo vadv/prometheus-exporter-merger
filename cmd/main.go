@@ -1,4 +1,4 @@
-package main
+package cmd
 
 import (
 	"context"
@@ -12,7 +12,7 @@ import (
 	"github.com/vadv/prometheus-exporter-merger/merger"
 )
 
-func main() {
+func Execute() {
 
 	var (
 		configPath = flag.String("config", "config.yaml", "Path to config")
