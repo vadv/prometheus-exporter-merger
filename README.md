@@ -9,7 +9,7 @@ Merges Prometheus metrics from multiple sources.
 To start the exporter:
 
 ```
-prometheus-exporter-merger --config config.yaml
+prometheus-exporter-merger --config /config/prometheus-exporter-merger.yaml
 ```
 
 Config example:
@@ -29,6 +29,7 @@ sources:
 ## Kubernetes
 
 The prometheus-exporter-merger is supposed to run as a sidecar.
+By default, config must be available in the container by the path: `/config/prometheus-exporter-merger.yaml`.
 
 ```yaml
 ...
