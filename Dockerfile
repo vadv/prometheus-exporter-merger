@@ -2,6 +2,7 @@ FROM golang:1.14-alpine3.11 as builder
 
 RUN apk add --no-cache git make gcc libc-dev
 
+WORKDIR /github.com/vadv/prometheus-exporter-merger
 COPY go.mod .
 COPY go.sum .
 RUN go mod download
