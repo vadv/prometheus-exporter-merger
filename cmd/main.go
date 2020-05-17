@@ -24,7 +24,7 @@ func Execute() {
 		panic(err)
 	}
 
-	m := merger.New(c.Timeout)
+	m := merger.New(c.ScrapTimeout)
 	for _, s := range c.Sources {
 		var labels []*prom.LabelPair
 		for k, v := range s.Labels {

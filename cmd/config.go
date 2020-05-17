@@ -13,9 +13,9 @@ type source struct {
 }
 
 type config struct {
-	Listen  string        `yaml:"listen"`
-	Timeout time.Duration `yaml:"timeout"`
-	Sources []*source     `yaml:"sources"`
+	Listen       string        `yaml:"listen"`
+	ScrapTimeout time.Duration `yaml:"scrap_timeout"`
+	Sources      []*source     `yaml:"sources"`
 }
 
 func parseConfig(filename string) (*config, error) {
@@ -24,8 +24,8 @@ func parseConfig(filename string) (*config, error) {
 		return nil, err
 	}
 	result := &config{
-		Listen:  ":8080",
-		Timeout: 15 * time.Second,
+		Listen:       ":8080",
+		ScrapTimeout: 15 * time.Second,
 	}
 	return result, yaml.Unmarshal(data, result)
 }

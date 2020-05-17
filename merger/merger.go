@@ -16,10 +16,10 @@ type Merger interface {
 }
 
 type merger struct {
-	mu      sync.Mutex
-	timeout time.Duration
-	client  *http.Client
-	sources []*source
+	mu           sync.Mutex
+	scrapTimeout time.Duration
+	client       *http.Client
+	sources      []*source
 }
 
 type source struct {
@@ -27,7 +27,7 @@ type source struct {
 	labels []*prom.LabelPair
 }
 
-func New(timeout time.Duration) Merger {
+func New(scrapTimeout time.Duration) Merger {
 	client := &http.Client{
 		Transport: &http.Transport{
 			DisableKeepAlives:   false,
@@ -37,11 +37,11 @@ func New(timeout time.Duration) Merger {
 			MaxConnsPerHost:     10,
 			IdleConnTimeout:     5 * time.Minute,
 		},
-		Timeout: timeout,
+		Timeout: scrapTimeout,
 	}
 	return &merger{
-		timeout: timeout,
-		client:  client,
+		scrapTimeout: scrapTimeout,
+		client:       client,
 	}
 }
 
@@ -56,7 +56,7 @@ func (m *merger) AddSource(url string, labels []*prom.LabelPair) {
 func (m *merger) Merge(w io.Writer) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
-	ctx, cancel := context.WithTimeout(context.Background(), m.timeout)
+	ctx, cancel := context.WithTimeout(context.Background(), m.scrapTimeout)
 	defer cancel()
 	return m.merge(ctx, w)
 }
