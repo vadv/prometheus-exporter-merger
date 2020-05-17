@@ -4,7 +4,7 @@ Merges Prometheus metrics from multiple sources.
 
 ## But Why?!
 
-Sometimes you need in Kubernetes to scrape Prometheus metrics from multiple containers in a single pod,
+Sometimes you need to scrape Prometheus metrics from multiple containers in a single pod,
 but you can't do this using annotations: [prometheus/prometheus#3756](https://github.com/prometheus/prometheus/issues/3756).
 
 To start the exporter:
@@ -40,7 +40,6 @@ export URL_2=http://0.0.0.0:7070/api/v1/metrics/prometheus,key2:Z
 ## Kubernetes
 
 The prometheus-exporter-merger is supposed to run as a sidecar.
-By default, config must be available in the container by the path: `/config/prometheus-exporter-merger.yaml`.
 
 ```yaml
 ...
