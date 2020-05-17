@@ -4,7 +4,8 @@ Merges Prometheus metrics from multiple sources.
 
 ## But Why?!
 
-> [prometheus/prometheus#3756](https://github.com/prometheus/prometheus/issues/3756)
+Sometimes you need in Kubernetes to scrape Prometheus metrics from multiple containers in a single pod,
+but you can't do this using annotations: [prometheus/prometheus#3756](https://github.com/prometheus/prometheus/issues/3756).
 
 To start the exporter:
 
@@ -20,10 +21,20 @@ scrap_timeout: 20s
 sources:
   - url: http://127.0.0.1:8081/metrics
     labels:
-      key1: value1
+      keyX: valueX
+      keyY: Y
   - url: http://127.0.0.1:8082/metrics
     labels:
-      key2: value2
+      key2: Z
+```
+
+Another way to pass configuration by setting environment variables:
+
+```bash
+export LISTEN=":8080"
+export SCRAPE_TIMEOUT="20s"
+export URL_1=http://127.0.0.1:801/api/v1/metrics/prometheus,keyX:valueX,keyY:Y
+export URL_2=http://0.0.0.0:7070/api/v1/metrics/prometheus,key2:Z
 ```
 
 ## Kubernetes
@@ -44,8 +55,14 @@ By default, config must be available in the container by the path: `/config/prom
 ...
       - name: prometheus-exporter-merger
         image: vadv/prometheus-exporter-merger
-        volumeMounts:
-        - name: config
-          mountPath: /config
+        env:
+        - name: LISTEN
+          value: :8080
+        - name: SCRAPE_TIMEOUT
+          value: 20s
+        - name: URL_COMMON
+          value: http://127.0.0.1:8081/api/v1/metrics/prometheus,type:common
+        - name: URL_AUDIT
+          value: http://127.0.0.1:8082/api/v1/metrics/prometheus,type:audit
 ...
 ```

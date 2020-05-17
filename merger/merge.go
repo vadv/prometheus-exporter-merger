@@ -35,10 +35,13 @@ func (m *merger) merge(ctx context.Context, w io.Writer) error {
 			mu.Lock()
 			defer mu.Unlock()
 			for name, metricFamily := range out {
-				// append metrics
-				for _, metric := range metricFamily.Metric {
-					metric.Label = append(metric.Label, source.labels...)
+				// append labels
+				if len(source.labels) > 0 {
+					for _, metric := range metricFamily.Metric {
+						metric.Label = append(metric.Label, source.labels...)
+					}
 				}
+				// append metrics
 				if mfResult, ok := result[name]; ok {
 					mfResult.Metric = append(mfResult.Metric, metricFamily.Metric...)
 				} else {

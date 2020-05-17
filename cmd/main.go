@@ -3,6 +3,7 @@ package cmd
 import (
 	"context"
 	"flag"
+	"log"
 	"net/http"
 	"os"
 	"os/signal"
@@ -24,17 +25,19 @@ func Execute() {
 		panic(err)
 	}
 
-	m := merger.New(c.ScrapTimeout)
+	m := merger.New(c.ScrapeTimeout)
 	for _, s := range c.Sources {
 		var labels []*prom.LabelPair
 		for k, v := range s.Labels {
 			k, v := k, v
 			labels = append(labels, &prom.LabelPair{Name: &k, Value: &v})
 		}
+		log.Printf("[INFO] add url: %s with labels: %v\n", s.Url, s.Labels)
 		m.AddSource(s.Url, labels)
 	}
 
 	srv := &http.Server{Addr: c.Listen, Handler: &handler{m: m}}
+	log.Printf("[INFO] starting listen %s\n", c.Listen)
 	go srv.ListenAndServe()
 
 	stop := make(chan os.Signal, 1)

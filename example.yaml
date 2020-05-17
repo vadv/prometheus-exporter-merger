@@ -1,5 +1,5 @@
 listen: :8080
-timeout: 20s
+scrape_timeout: 20s
 sources:
   - url: http://127.0.0.1:8081/metrics
     labels:

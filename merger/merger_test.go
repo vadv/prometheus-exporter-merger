@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"net"
 	"net/http"
+	"sort"
+	"strings"
 	"testing"
 	"time"
 
@@ -27,15 +29,15 @@ fluentbit_filter_add_records_total{name="kubernetes.0"} 0 1589716338417
 fluentbit_filter_add_records_total{name="lua.1"} 0 1589716338417
 fluentbit_filter_add_records_total{name="rewrite_tag.2"} 0 1589716338417
 `
-	result = `# TYPE fluentbit_filter_add_records_total counter
-fluentbit_filter_add_records_total{name="lua.1",url="value2"} 0 1589716338417
-fluentbit_filter_add_records_total{name="rewrite_tag.2",url="value2"} 0 1589716338417
+	result = `
+# TYPE fluentbit_filter_add_records_total counter
 fluentbit_filter_add_records_total{name="kubernetes.0",url="value1"} 0 1589716338403
+fluentbit_filter_add_records_total{name="kubernetes.0",url="value1"} 0 1589716338417
 fluentbit_filter_add_records_total{name="lua.1",url="value1"} 0 1589716338403
+fluentbit_filter_add_records_total{name="lua.1",url="value2"} 0 1589716338417
 fluentbit_filter_add_records_total{name="lua.2",url="value1"} 0 1589716338403
 fluentbit_filter_add_records_total{name="lua.3",url="value1"} 0 1589716338403
-fluentbit_filter_add_records_total{name="kubernetes.0",url="value1"} 0 1589716338417
-`
+fluentbit_filter_add_records_total{name="rewrite_tag.2",url="value2"} 0 1589716338417`
 )
 
 func Test_Merger(t *testing.T) {
@@ -65,7 +67,9 @@ func Test_Merger(t *testing.T) {
 	out := bytes.NewBuffer(make([]byte, 0))
 	m.Merge(out)
 
-	if out.String() != result {
-		t.Fatalf("get:\n%s\nexcept:\n%s\n", out.String(), result)
+	outStrs := strings.Split(out.String(), "\n")
+	sort.Strings(outStrs)
+	if result != strings.Join(outStrs, "\n") {
+		t.Fatalf("out:\n%s\n", strings.Join(outStrs, "\n"))
 	}
 }
